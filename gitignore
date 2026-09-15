@@ -1,0 +1,26 @@
+# Variables de entorno (nunca subir valores reales)
+.env
+.env.local
+.env.*.local
+
+# Repos clonados como subcarpetas (cada uno tiene su propio control de versiones)
+repo-backend/
+repo-frontend/
+
+# Dependencias (por si se corre algo fuera de contenedores)
+node_modules/
+
+# Volúmenes y datos persistentes de Docker (si se generan localmente)
+postgres-data/
+*.pgdata
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Editor / IDE
+.vscode/
+.idea/

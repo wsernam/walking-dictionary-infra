@@ -1,0 +1,2 @@
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+cd C:\Users\wsern\OneDrive\Escritorio\walking-dictionary-infra
