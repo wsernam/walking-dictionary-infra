@@ -1,0 +1,78 @@
+# docker-compose.yml
+# Vive en la RAÍZ del repo de INFRAESTRUCTURA. Levanta backend + frontend + PostgreSQL
+# para desarrollo local. Basado en el docker-compose.yml del repo de backend
+# (A-Walking-Dictionary-NovaCode-Back-end), con el servicio "frontend" activado.
+#
+# Requisito previo: backend y frontend clonados dentro de este repo (ver setup.sh /
+# setup.ps1) y un archivo .env en esta misma carpeta (copiar .env.example).
+
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: walking_dictionary_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Postgres ejecuta TODOS los archivos de docker-entrypoint-initdb.d/ en orden alfabético,
+      # solo la primera vez que se crea el volumen (si el volumen ya existe, no se vuelven a
+      # correr — hay que "docker compose down -v" para forzar que se ejecuten de nuevo).
+      - ./A-Walking-Dictionary-NovaCode-Back-end/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./A-Walking-Dictionary-NovaCode-Back-end/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./A-Walking-Dictionary-NovaCode-Back-end/backend
+      dockerfile: Dockerfile-backend
+    container_name: walking_dictionary_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      PORT: 5000
+      JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      # Monta el código local dentro del contenedor: editas en tu editor,
+      # el contenedor lo ve al instante (hot reload con nodemon), sin reconstruir la imagen.
+      - ./A-Walking-Dictionary-NovaCode-Back-end/backend:/app
+      # Evita que node_modules del host (si existe) pise el instalado en el contenedor
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./A-Walking-Dictionary-NovaCode-Front-end
+      dockerfile: Dockerfile
+    container_name: walking_dictionary_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      VITE_USE_MOCK: ${VITE_USE_MOCK}
+    volumes:
+      - ./A-Walking-Dictionary-NovaCode-Front-end:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
