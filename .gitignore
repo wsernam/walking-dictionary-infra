@@ -4,8 +4,8 @@
 .env.*.local
 
 # Repos clonados como subcarpetas (cada uno tiene su propio control de versiones)
-repo-backend/
-repo-frontend/
+A-Walking-Dictionary-NovaCode-Back-end/
+A-Walking-Dictionary-NovaCode-Front-end/
 
 # Dependencias (por si se corre algo fuera de contenedores)
 node_modules/
