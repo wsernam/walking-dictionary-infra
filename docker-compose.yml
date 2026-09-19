@@ -47,6 +47,7 @@ services:
       DB_NAME: ${DB_NAME}
       PORT: 5000
       JWT_SECRET: ${JWT_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     volumes:
       # Monta el código local dentro del contenedor: editas en tu editor,
       # el contenedor lo ve al instante (hot reload con nodemon), sin reconstruir la imagen.
@@ -70,6 +71,7 @@ services:
       VITE_USE_MOCK: ${VITE_USE_MOCK}
       VITE_DOCENTE_ID_SIMULADO: ${VITE_DOCENTE_ID_SIMULADO}
       VITE_INSCRIPCION_ID_SIMULADA: ${VITE_INSCRIPCION_ID_SIMULADA}
+      VITE_ESTUDIANTE_ID_SIMULADO: ${VITE_ESTUDIANTE_ID_SIMULADO}
     volumes:
       - ./A-Walking-Dictionary-NovaCode-Front-end:/app
       - /app/node_modules
