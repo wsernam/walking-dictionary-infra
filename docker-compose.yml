@@ -48,6 +48,11 @@ services:
       PORT: 5000
       JWT_SECRET: ${JWT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      # Interruptor SOLO para desarrollo local: con DISABLE_AUTH=true, authenticate/requireRole
+      # dejan pasar todo sin pedir token, simulando un usuario con rol DISABLE_AUTH_ROL.
+      # NUNCA debe quedar en true en un entorno real. Ver authMiddleware.js.
+      DISABLE_AUTH: ${DISABLE_AUTH:-false}
+      DISABLE_AUTH_ROL: ${DISABLE_AUTH_ROL:-docente}
     volumes:
       # Monta el código local dentro del contenedor: editas en tu editor,
       # el contenedor lo ve al instante (hot reload con nodemon), sin reconstruir la imagen.
